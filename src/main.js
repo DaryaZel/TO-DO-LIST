@@ -163,7 +163,7 @@ function appendCloseIcon(listItem) {
   if (listItem) {
     let span = document.createElement('span')
     let spanImg = document.createElement('img')
-    spanImg.src = './image/cancel.png'
+    spanImg.src = './src/image/cancel.png'
     spanImg.className = 'list-item__closeIMG'
     span.appendChild(spanImg)
     span.className = "list-item__span"
