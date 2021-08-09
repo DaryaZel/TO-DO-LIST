@@ -1,7 +1,4 @@
-const PROPERTY_INPUT = 'input'
-const PROPERTY_IMPORTANT = 'important'
-const PROPERTY_DONE = 'done'
-
+let storageManager = new StorageManager()
 let add = document.querySelector('#add')
 let text = document.querySelector('#text')
 let list = document.querySelector('#list')
@@ -10,9 +7,7 @@ let stars = document.querySelectorAll('.star')
 stars.forEach(item => arrayStars.push(item.id))
 
 
-
 add.onclick = function () {
-  //newElement()
   newToDoItemFromUserInput()
   refreshToDoList()
 }
@@ -21,7 +16,7 @@ list.addEventListener('dblclick', function (e) {
   if (e.target.tagName == 'LI') {
     let text = e.target.textContent
     e.target.classList.toggle('important')
-    toggleProperty(text, PROPERTY_IMPORTANT)
+    storageManager.toggleImportantByText(text)
     refreshToDoList()
   }
 });
@@ -37,7 +32,7 @@ list.onclick = function (e) {
   if (e.target.className == 'list-item__closeIMG') {
     let text = e.target.parentElement.parentElement.textContent
     e.target.parentElement.parentElement.remove()
-    deleteTaskInLocalStorage(text)
+    storageManager.deleteItemByText(text)
   }
   else if (e.target.type == 'checkbox') {
     let listItem = e.target.parentElement
@@ -46,7 +41,7 @@ list.onclick = function (e) {
       starsGlow()
     }
     listItem.classList.toggle('note-list__item_checked')
-    toggleProperty(text, PROPERTY_DONE)
+    storageManager.toggleDoneByText(text)
     refreshToDoList()
   }
 }
@@ -67,22 +62,6 @@ function starsGlow() {
   })
 }
 
-function toggleProperty(text, propertyKey) {
-  for (let key in localStorage) {
-    let localctorageItem = JSON.parse(localStorage.getItem(key))
-    if (localctorageItem) {
-      if (localctorageItem[PROPERTY_INPUT] == text && localctorageItem[propertyKey] == 0) {
-        localctorageItem[propertyKey] = 1
-        localStorage.setItem(key, JSON.stringify(localctorageItem))
-      }
-      else if (localctorageItem[PROPERTY_INPUT] == text && localctorageItem[propertyKey] == 1) {
-        localctorageItem[propertyKey] = 0
-        localStorage.setItem(key, JSON.stringify(localctorageItem))
-      }
-    }
-  }
-}
-
 function refreshToDoList() {
   let toDoItems = document.querySelectorAll("li")
   toDoItems.forEach(e => e.parentNode.removeChild(e))
@@ -91,17 +70,12 @@ function refreshToDoList() {
 }
 
 function sortToDoItems() {
-  let array = []
-  for (let key in localStorage) {
-    let localctorageItem = JSON.parse(localStorage.getItem(key))
-    if (localctorageItem) {
-      array.push(localctorageItem)
-    }
-  }
+  
+  let array = storageManager.getAllItems()
 
   array.sort(function (a, b) {
-    let aSortWeight = a[PROPERTY_IMPORTANT] * 10 + a[PROPERTY_DONE] * (-100)
-    let bSortWeight = b[PROPERTY_IMPORTANT] * 10 + b[PROPERTY_DONE] * (-100)
+    let aSortWeight = a.important * 10 + a.done * (-100)
+    let bSortWeight = b.important * 10 + b.done * (-100)
 
     if (aSortWeight == bSortWeight) return 0;
     if (aSortWeight > bSortWeight) return -1;
@@ -111,16 +85,16 @@ function sortToDoItems() {
   return array;
 }
 
-function newUIElementFromLocalStorage(itemFromLocalStorage) {
-  if (itemFromLocalStorage) {
+function newUIElementFromLocalStorage(toDoItem) {
+  if (toDoItem) {
     let li = createEmptyListItem()
     appendCheckbox(li)
-    li.appendChild(document.createTextNode(itemFromLocalStorage[PROPERTY_INPUT]))
+    li.appendChild(document.createTextNode(toDoItem.input))
     appendCloseIcon(li)
-    if (itemFromLocalStorage[PROPERTY_IMPORTANT] == 1) {
+    if (toDoItem.important == 1) {
       li.classList.add('note-list__item_important')
     }
-    if (itemFromLocalStorage[PROPERTY_DONE] == 1) {
+    if (toDoItem.done == 1) {
       li.classList.add('note-list__item_checked')
       li.firstChild.checked = true
     }
@@ -134,12 +108,8 @@ function newToDoItemFromUserInput() {
     alert('Wright something')
   }
   else {
-    let toDoItem = {
-      [PROPERTY_INPUT]: input.trim(),
-      [PROPERTY_IMPORTANT]: 0,
-      [PROPERTY_DONE]: 0
-    }
-    addToLocalStorage(JSON.stringify(toDoItem))
+    let toDoItem = new ToDoItem(input.trim(), 0, 0)
+    storageManager.addItem(toDoItem)
     document.querySelector('#text').value = ''
   }
 }
@@ -170,24 +140,6 @@ function appendCloseIcon(listItem) {
     listItem.appendChild(span)
   }
 }
-
-
-function addToLocalStorage(toDoItem) {
-  let randomNumber = Math.floor(Math.random() * 100)
-  localStorage.setItem(randomNumber, toDoItem)
-}
-
-function deleteTaskInLocalStorage(text) {
-  for (let key in localStorage) {
-    let localctorageItem = JSON.parse(localStorage.getItem(key))
-    if (localctorageItem) {
-      if (localctorageItem[PROPERTY_INPUT] == text) {
-        localStorage.removeItem(key)
-      }
-    }
-  }
-}
-
 
 function removeArrayItem(arr, value) {
   let i = 0;
