@@ -5,3 +5,4 @@ class ToDoItem {
         this.done = done
     }
 }
+export { ToDoItem }

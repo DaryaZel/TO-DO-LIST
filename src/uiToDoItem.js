@@ -29,7 +29,7 @@ class UiToDoItem {
     #createCloseIcon() {
         let span = document.createElement('span')
         let spanImg = document.createElement('img')
-        spanImg.src = './src/image/cancel.png'
+        spanImg.src = './public/img/cancel.png'
         spanImg.className = 'list-item__closeIMG'
         span.appendChild(spanImg)
         span.className = "list-item__span"
@@ -62,3 +62,5 @@ class UiToDoItem {
         return uiItem;
     }
 }
+
+export { UiToDoItem }

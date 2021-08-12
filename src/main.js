@@ -1,3 +1,14 @@
+import { ToDoItem } from './toDoItem'
+import { StorageManager } from './localStorage'
+import { UiToDoItem } from './uiToDoItem'
+import './css/main.css'
+import './img/cancel.png';
+import './img/note.png';
+import './img/notebook.svg';
+import './img/notebook.jpeg';
+import './img/shooting-stars-mirror.svg';
+import './img/shooting-stars.svg';
+
 let storageManager = new StorageManager()
 let add = document.querySelector('#add')
 let text = document.querySelector('#text')

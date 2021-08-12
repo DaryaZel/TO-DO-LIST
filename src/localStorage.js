@@ -62,3 +62,4 @@ class StorageManager {
         return array
     }
 }
+export { StorageManager }
