@@ -64,7 +64,7 @@ body, html {
 .form-container__button{
   width: 20%;
   min-width: 60px;
-  max-width: 50px;
+  max-width: 70px;
   border: solid  #a5ccda;
   border-width: 2px 2px 2px 0px;
   border-radius: 30px;
@@ -360,6 +360,10 @@ body, html {
   }
   .form-container__input{
     min-width: 50px;
+  }
+  .form-container__button{
+    min-width: 50px;
+    font-size: 1em;
   }
   .main-container-for-list-decor{
     min-width: 320px;
